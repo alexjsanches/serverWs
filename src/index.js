@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
-const fetch = require('node-fetch');
-const cors = require('cors'); 
+const axios = require('axios'); // Use o Axios em vez do node-fetch
+const cors = require('cors');
 
 // Configurações
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3333;
 
 let bearerToken = '';
 const apiEndpoint = 'https://api.sankhya.com.br/login';
@@ -13,14 +13,11 @@ const username = 'alexandre.sanches@worldseg.com.br';
 const password = '862485inteliX!';
 const contentType = 'text/xml';
 
-
 app.use(cors());
-
 
 async function getBearerToken() {
   try {
-    const response = await fetch(apiEndpoint, {
-      method: 'POST',
+    const response = await axios.post(apiEndpoint, null, {
       headers: {
         'token': '68e350b2-690f-4450-affd-bb1bf1f4a5fa',
         'appkey': appKey,
@@ -30,7 +27,7 @@ async function getBearerToken() {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
+      const data = response.data;
       if (data.bearerToken) {
         bearerToken = data.bearerToken;
         return bearerToken;
@@ -45,7 +42,7 @@ async function getBearerToken() {
   }
 }
 
-app.get('/api/token', async (res) => {
+app.get('/api/token', async (req, res) => {
   try {
     const token = await getBearerToken();
     if (token !== null) {
@@ -57,7 +54,6 @@ app.get('/api/token', async (res) => {
     res.status(500).json({ error: 'Erro na requisição' });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
