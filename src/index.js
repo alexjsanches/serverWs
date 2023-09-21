@@ -11,7 +11,6 @@ const apiEndpoint = 'https://api.sankhya.com.br/login';
 const appKey = '2a1e93b9-4f51-41e5-941f-45d783c3dd90';
 const username = 'alexandre.sanches@worldseg.com.br';
 const password = '862485inteliX!';
-const contentType = 'text/xml';
 
 app.use(cors());
 
