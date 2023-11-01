@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PedidoNFatur {
+model Pedido {
   id                   Int       @id @default(autoincrement())
   empresa              Int
   nroUnico             Int

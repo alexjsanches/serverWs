@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 const cron = require('node-cron');
 
 
-app.use(cors());
+
 
 
 const emitter = new EventEmitter();
@@ -32,7 +32,7 @@ const appKey = '2a1e93b9-4f51-41e5-941f-45d783c3dd90';
 const username = 'alexandre.sanches@worldseg.com.br';
 const password = '862485inteliX!';
 
-
+app.use(cors());
 
 async function getBearerToken() {
   try {
@@ -77,65 +77,8 @@ app.get('/api/token', async (req, res) => {
   }
 });
 
-app.get('/api/config', (req, res) => {
-  const configFile = path.join(__dirname, 'config.json');
-  const configData = fs.readFileSync(configFile, 'utf8');
-  const config = JSON.parse(configData);
 
-  res.json(config);
-});
-
-app.get('/admin', (req, res) => {
-  const configFile = path.join(__dirname, 'config.json');
-  try {
-    const configData = fs.readFileSync(configFile, 'utf8');
-    const config = JSON.parse(configData);
-    res.render('admin', { config });
-  } catch (error) {
-    console.error('Erro ao ler o arquivo config.json:', error);
-    const config = {};
-    res.render('admin', { config });
-  }
-});
-
-app.get('/api/config/sse', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-  });
-
-  const configUpdateHandler = (config) => {
-    res.write(`data: ${JSON.stringify(config)}\n\n`);
-  };
-
-  emitter.on('configUpdate', configUpdateHandler);
-
-  req.on('close', () => {
-    emitter.removeListener('configUpdate', configUpdateHandler);
-  });
-});
-
-app.post('/api/config', (req, res) => {
-  const { diasConcluidos, metaUdi, metaGyn } = req.body;
-
-  const newConfig = {
-    diasConcluidos: parseInt(diasConcluidos, 10),
-    metaUdi: parseFloat(metaUdi),
-    metaGyn: parseFloat(metaGyn),
-  };
-
-  if (!isNaN(newConfig.diasConcluidos) && !isNaN(newConfig.metaUdi) && !isNaN(newConfig.metaGyn)) {
-    const configFile = path.join(__dirname, 'config.json');
-    fs.writeFileSync(configFile, JSON.stringify(newConfig, null, 2));
-
-    emitter.emit('configUpdate', newConfig);
-
-    res.redirect('/admin');
-  } else {
-    res.status(400).json({ error: 'Valores inválidos fornecidos' });
-  }
-});
+let dadosInseridos = false;
 
 app.get('/api/consulta/0', async (req, res) => {
   try {
@@ -144,57 +87,19 @@ app.get('/api/consulta/0', async (req, res) => {
       return res.status(500).json({ error: 'Erro ao obter o token.' });
     }
 
-    const formattedData = await fetchAndFormatData(token, udiPayload.buildPayload());
-    if (!formattedData) {
-      return res.status(500).json({ error: 'Erro na consulta.' });
-    }
+    if (!dadosInseridos) {
+      // Se a tabela estiver vazia, escreva os dados nela
+      const formattedData = await fetchAndFormatData(token, udiPayload.buildPayload());
+      if (!formattedData) {
+        return res.status(500).json({ error: 'Erro na consulta.' });
+      }
 
-    for (const row of formattedData.responseBody.rows) {
-      // Verifique se a linha já existe no banco com base no nroUnico.
-      const registroBanco = await prisma.pedidoNFatur.findFirst({
-        where: { nroUnico: row[1] },
-      });
-
-      if (registroBanco) {
-        // Se a linha já existe, atualize os dados no banco.
-        await prisma.pedidoNFatur.update({
-          where: { id: registroBanco.id },
+      for (const row of formattedData.responseBody.rows) {
+        console.log('Dados a serem salvos no banco:', row);
+        await prisma.pedido.create({
           data: {
             empresa: row[0],
-            nroNota: row[2],
-            ordemCarga: row[3],
-            dataNegociacao: row[4].toLocaleDateString('pt-BR'),
-            previsaoEntrega: row[5],
-            codTipoOper: row[6],
-            descTipoOper: row[7],
-            tipMov: row[8],
-            entregaCliente: row[9],
-            codVendedor: row[10],
-            vendedor: row[11],
-            codParceiro: row[12],
-            razaoSocial: row[13],
-            pendente: row[14],
-            codProduto: row[15],
-            descricaoProduto: row[16],
-            marca: row[17],
-            controle: row[18],
-            qtdNegociada: row[19],
-            qtdPendente: row[20],
-            estoque: row[21],
-            valorUnitario: row[22],
-            valorTotal: row[23],
-            valorPendente: row[24],
-            mes: row[25],
-            statusAguardando: row[26],
-            previsaoEntregaFinal: row[27],
-            dataModificacao: new Date(), 
-          },
-        });
-      } else {
-        await prisma.pedidoNFatur.create({
-          data: {
-            empresa: row[0],
-            nroUnico: row[1],
+            nroUnico: row[1], 
             nroNota: row[2],
             ordemCarga: row[3],
             dataNegociacao: row[4],
@@ -221,25 +126,112 @@ app.get('/api/consulta/0', async (req, res) => {
             mes: row[25],
             statusAguardando: row[26],
             previsaoEntregaFinal: row[27],
-            dataModificacao: new Date(),
+            dataModificacao: new Date(), 
           },
         });
       }
-    }
 
-await prisma.pedidoNFatur.deleteMany({
-  where: {
-    NOT: {
-      nroUnico: {
-        in: formattedData.responseBody.rows.map((row) => row[1])
+      dadosInseridos = true; 
+
+      return res.json({ message: 'Dados inseridos no banco.' });
+    } else {
+      // Se a tabela não estiver vazia, execute as verificações
+      const formattedData = await fetchAndFormatData(token, udiPayload.buildPayload());
+      if (!formattedData) {
+        return res.status(500).json({ error: 'Erro na consulta.' });
       }
+
+      for (const row of formattedData.responseBody.rows) {
+        const registroBanco = await prisma.pedido.findFirst({
+          where: { nroUnico: row[1] },
+        });
+
+        if (registroBanco) {
+          // Atualize os dados no banco
+          await prisma.pedido.update({
+            where: { id: registroBanco.id },
+            data: {
+              empresa: row[0],
+              nroUnico: row[1], 
+              nroNota: row[2],
+              ordemCarga: row[3],
+              dataNegociacao: row[4],
+              previsaoEntrega: row[5],
+              codTipoOper: row[6],
+              descTipoOper: row[7],
+              tipMov: row[8],
+              entregaCliente: row[9],
+              codVendedor: row[10],
+              vendedor: row[11],
+              codParceiro: row[12],
+              razaoSocial: row[13],
+              pendente: row[14],
+              codProduto: row[15],
+              descricaoProduto: row[16],
+              marca: row[17],
+              controle: row[18],
+              qtdNegociada: row[19],
+              qtdPendente: row[20],
+              estoque: row[21],
+              valorUnitario: row[22],
+              valorTotal: row[23],
+              valorPendente: row[24],
+              mes: row[25],
+              statusAguardando: row[26],
+              previsaoEntregaFinal: row[27],
+              dataModificacao: new Date(), 
+            },
+          });
+        } else {
+          // Crie um novo registro no banco
+          await prisma.pedido.create({
+            data: {
+              empresa: row[0],
+              nroUnico: row[1], 
+              nroNota: row[2],
+              ordemCarga: row[3],
+              dataNegociacao: row[4],
+              previsaoEntrega: row[5],
+              codTipoOper: row[6],
+              descTipoOper: row[7],
+              tipMov: row[8],
+              entregaCliente: row[9],
+              codVendedor: row[10],
+              vendedor: row[11],
+              codParceiro: row[12],
+              razaoSocial: row[13],
+              pendente: row[14],
+              codProduto: row[15],
+              descricaoProduto: row[16],
+              marca: row[17],
+              controle: row[18],
+              qtdNegociada: row[19],
+              qtdPendente: row[20],
+              estoque: row[21],
+              valorUnitario: row[22],
+              valorTotal: row[23],
+              valorPendente: row[24],
+              mes: row[25],
+              statusAguardando: row[26],
+              previsaoEntregaFinal: row[27],
+              dataModificacao: new Date(), 
+            },
+          });
+        }
+      }
+
+      await prisma.pedido.deleteMany({
+        where: {
+          NOT: {
+            nroUnico: {
+              in: formattedData.responseBody.rows.map((row) => row[1])
+            }
+          }
+        }
+      });
+
+      return res.json({ message: 'Verificações realizadas no banco.' });
     }
-  }
-});
-
-
-    return res.json(formattedData);
-    
   } catch (error) {
     console.error('Ocorreu um erro:', error);
     return res.status(500).json({ error: 'Erro no servidor.' });
@@ -267,7 +259,7 @@ cron.schedule('0 0 * * *', async () => {
 
     for (const row of formattedData.responseBody.rows) {
       // Verifique se a linha já existe no banco com base no nroUnico.
-      const registroBanco = await prisma.pedidoNFatur.findFirst({
+      const registroBanco = await prisma.pedido.findFirst({
         where: { nroUnico: row[1] },
       });
 
@@ -275,7 +267,7 @@ cron.schedule('0 0 * * *', async () => {
 
       if (registroBanco) {
         // Se a linha já existe, atualize os dados no banco.
-        await prisma.pedidoNFatur.update({
+        await prisma.pedido.update({
           where: { id: registroBanco.id },
           data: {
             empresa: row[0],
@@ -310,7 +302,7 @@ cron.schedule('0 0 * * *', async () => {
         });
       } else {
         // Se a linha não existe, insira uma nova entrada no banco.
-        await prisma.pedidoNFatur.create({
+        await prisma.pedido.create({
           data: {
             empresa: row[0],
             nroUnico: row[1],
@@ -347,7 +339,7 @@ cron.schedule('0 0 * * *', async () => {
     }
 
     // Remova registros do banco que não foram incluídos na consulta.
-    await prisma.pedidoNFatur.deleteMany({
+    await prisma.pedido.deleteMany({
       NOT: { nroUnico: { in: formattedData.responseBody.rows.map((row) => row[1]) } },
     });
   } catch (error) {
@@ -356,8 +348,8 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 app.get('/tabela', async (req, res) => {
-  const pedidos = await prisma.pedidoNFatur.findMany(); 
-  res.json(pedidos); 
+  const pedidos = await prisma.pedido.findMany(); // Consulta o banco para obter os pedidos
+  res.json({ pedidos }); // Renderiza uma página chamada 'tabela' e envia os dados dos pedidos para serem exibidos
 });
 
 
