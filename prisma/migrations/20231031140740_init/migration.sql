@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Pedido" ALTER COLUMN "Controle" SET DATA TYPE TEXT;

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Painel de Administração</title>
+</head>
+<body>
+  <h1>Configurações</h1>
+  <form action="/api/config" method="POST" enctype="application/x-www-form-urlencoded>
+    <label for="diasConcluidos">Dias Concluídos:</label>
+    <input type="number" id="diasConcluidos" name="diasConcluidos" value="<%= config.diasConcluidos %>"><br><br>
+    <label for="metaUdi">Meta UDI:</label>
+    <input type="text" id="metaUdi" name="metaUdi" value="<%= config.metaUdi %>"><br><br>
+    <label for="metaGyn">Meta GYN:</label>
+    <input type="text" id="metaGyn" name="metaGyn" value="<%= config.metaGyn %>"><br><br>
+    
+    <input type="submit" value="Salvar Configurações">
+  </form>
+  
+</body>
+</html>
