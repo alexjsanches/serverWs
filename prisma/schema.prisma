@@ -10,35 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Pedido {
+model PedidoNFatur {
   id                   Int       @id @default(autoincrement())
   empresa              Int
-  nroUnico             Int       @map("Nro. Unico")
-  nroNota              Int       @map("Nro. Nota")
-  ordemCarga           Int?      @map("Ordem de carga")
-  dataNegociacao       String    @map("Data de negociação")
-  previsaoEntrega      String?   @map("Previsão de entrega")
-  codTipoOper          Int       @map("TOP")
-  descTipoOper         String    @map("Descr. Top")
-  tipMov               String    @map("Tip. Mov")
-  entregaCliente       String    @map("Entrega Cliente")
-  codVendedor          Int       @map("Cód. Vendedor")
-  vendedor             String    @map("Vendedor")
-  codParceiro          Int       @map("Cod.Parc")
-  razaoSocial          String    @map("Razão Social")
-  pendente             String    @map("Pendente")
-  codProduto           Int       @map("Cód.Prod")
-  descricaoProduto     String    @map("Descrição")
-  marca                String    @map("Marca")
-  controle             String?   @map("Controle")
-  qtdNegociada         Float     @map("Qtd.Neg")
-  qtdPendente          Float     @map("Qtd.Pendente")
-  estoque              Float     @map("Estoque")
-  valorUnitario        Float     @map("Vlr. Unit")
-  valorTotal           Float     @map("Vlr.Total")
-  valorPendente        Float     @map("Vlr. Pendente")
+  nroUnico             Int
+  nroNota              Int
+  ordemCarga           Int?
+  dataNegociacao       String
+  previsaoEntrega      String?
+  codTipoOper          Int
+  descTipoOper         String
+  tipMov               String
+  entregaCliente       String
+  codVendedor          Int
+  vendedor             String
+  codParceiro          Int
+  razaoSocial          String
+  pendente             String
+  codProduto           Int
+  descricaoProduto     String
+  marca                String
+  controle             String?
+  qtdNegociada         Float
+  qtdPendente          Float
+  estoque              Float
+  valorUnitario        Float
+  valorTotal           Float
+  valorPendente        Float
   mes                  String
-  statusAguardando     String?   @map("Status Aguardando")
-  previsaoEntregaFinal String?   @map("PREVISÃO ENTREGA")
+  statusAguardando     String?
+  previsaoEntregaFinal String?
   dataModificacao      DateTime?
 }

@@ -151,7 +151,7 @@ app.get('/api/consulta/0', async (req, res) => {
 
     for (const row of formattedData.responseBody.rows) {
       // Verifique se a linha já existe no banco com base no nroUnico.
-      const registroBanco = await prisma.pedido.findFirst({
+      const registroBanco = await prisma.pedidoNFatur.findFirst({
         where: { nroUnico: row[1] },
       });
 
@@ -159,7 +159,7 @@ app.get('/api/consulta/0', async (req, res) => {
 
       if (registroBanco) {
         // Se a linha já existe, atualize os dados no banco.
-        await prisma.pedido.update({
+        await prisma.pedidoNFatur.update({
           where: { id: registroBanco.id },
           data: {
             empresa: row[0],
@@ -193,7 +193,7 @@ app.get('/api/consulta/0', async (req, res) => {
           },
         });
       } else {
-        await prisma.pedido.create({
+        await prisma.pedidoNFatur.create({
           data: {
             empresa: row[0],
             nroUnico: row[1],
@@ -229,7 +229,7 @@ app.get('/api/consulta/0', async (req, res) => {
       }
     }
 
-await prisma.pedido.deleteMany({
+await prisma.pedidoNFatur.deleteMany({
   where: {
     NOT: {
       nroUnico: {
@@ -241,6 +241,7 @@ await prisma.pedido.deleteMany({
 
 
     return res.json(formattedData);
+    
   } catch (error) {
     console.error('Ocorreu um erro:', error);
     return res.status(500).json({ error: 'Erro no servidor.' });
@@ -268,7 +269,7 @@ cron.schedule('0 0 * * *', async () => {
 
     for (const row of formattedData.responseBody.rows) {
       // Verifique se a linha já existe no banco com base no nroUnico.
-      const registroBanco = await prisma.pedido.findFirst({
+      const registroBanco = await prisma.pedidoNFatur.findFirst({
         where: { nroUnico: row[1] },
       });
 
@@ -276,7 +277,7 @@ cron.schedule('0 0 * * *', async () => {
 
       if (registroBanco) {
         // Se a linha já existe, atualize os dados no banco.
-        await prisma.pedido.update({
+        await prisma.pedidoNFatur.update({
           where: { id: registroBanco.id },
           data: {
             empresa: row[0],
@@ -311,7 +312,7 @@ cron.schedule('0 0 * * *', async () => {
         });
       } else {
         // Se a linha não existe, insira uma nova entrada no banco.
-        await prisma.pedido.create({
+        await prisma.pedidoNFatur.create({
           data: {
             empresa: row[0],
             nroUnico: row[1],
@@ -348,7 +349,7 @@ cron.schedule('0 0 * * *', async () => {
     }
 
     // Remova registros do banco que não foram incluídos na consulta.
-    await prisma.pedido.deleteMany({
+    await prisma.pedidoNFatur.deleteMany({
       NOT: { nroUnico: { in: formattedData.responseBody.rows.map((row) => row[1]) } },
     });
   } catch (error) {
@@ -357,7 +358,7 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 app.get('/tabela', async (req, res) => {
-  const pedidos = await prisma.pedido.findMany(); // Consulta o banco para obter os pedidos
+  const pedidos = await prisma.pedidoNFatur.findMany(); // Consulta o banco para obter os pedidos
   res.json(pedidos); // Envia os dados dos pedidos como JSON
 });
 
