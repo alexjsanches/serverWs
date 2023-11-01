@@ -155,8 +155,6 @@ app.get('/api/consulta/0', async (req, res) => {
         where: { nroUnico: row[1] },
       });
 
-      const dataDeModificacao = new Date();
-
       if (registroBanco) {
         // Se a linha já existe, atualize os dados no banco.
         await prisma.pedidoNFatur.update({
@@ -165,7 +163,7 @@ app.get('/api/consulta/0', async (req, res) => {
             empresa: row[0],
             nroNota: row[2],
             ordemCarga: row[3],
-            dataNegociacao: row[4],
+            dataNegociacao: row[4].toLocaleDateString('pt-BR'),
             previsaoEntrega: row[5],
             codTipoOper: row[6],
             descTipoOper: row[7],
@@ -358,8 +356,8 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 app.get('/tabela', async (req, res) => {
-  const pedidos = await prisma.pedidoNFatur.findMany(); // Consulta o banco para obter os pedidos
-  res.json(pedidos); // Envia os dados dos pedidos como JSON
+  const pedidos = await prisma.pedidoNFatur.findMany(); 
+  res.json(pedidos); 
 });
 
 
