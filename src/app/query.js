@@ -18,6 +18,8 @@ const buildPayload = () => {
           WHERE (CAM.NOMETAB = 'TGFCAB'
           AND NOMECAMPO = 'AD_ENTREGACLIENTE'
           AND OPC.VALOR = CAB.AD_ENTREGACLIENTE)) AS "Entrega Cliente",
+        PAR.AD_CODPROJ AS "Cód. Vendedor Externo",
+        PRJ.IDENTIFICACAO AS "Vendedor Externo",
         CAB.CODVEND AS "Cód. Vendedor",
         VEN.APELIDO AS "Vendedor",
         CAB.CODPARC AS "Cod.Parc",
@@ -98,7 +100,7 @@ const buildPayload = () => {
       AND CAB.CODTIPVENDA = TPV.CODTIPVENDA
       AND CAB.DHTIPVENDA = TPV.DHALTER
       AND CAB.CODEMP IN (1,3)
-      AND TRUNC(CAB.DTNEG) BETWEEN '01/09/2023' AND '31/10/2023'
+      AND TRUNC(CAB.DTNEG) BETWEEN '01/11/2023' AND '06/11/2023'
       ORDER BY CAB.CODEMP, CAB.NUNOTA, ITE.SEQUENCIA`,
       },
     };

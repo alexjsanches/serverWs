@@ -22,6 +22,8 @@ model Pedido {
   descTipoOper         String
   tipMov               String
   entregaCliente       String
+  codVendExt           Int?
+  vendedorExt          String?
   codVendedor          Int
   vendedor             String
   codParceiro          Int

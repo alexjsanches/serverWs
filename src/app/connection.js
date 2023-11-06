@@ -47,7 +47,7 @@ async function fetchAndFormatData(token, payload) {
 
 async function getToken() {
   try {
-    const tokenResponse = await axios.get('https://serverws.onrender.com/api/token');
+    const tokenResponse = await axios.get('http://serverws2.onrender.com/api/token');
     return tokenResponse.data.token;
   } catch (error) {
     console.error('Erro ao obter o token:', error);

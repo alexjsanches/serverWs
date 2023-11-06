@@ -38,7 +38,7 @@ async function getBearerToken() {
   try {
     const response = await axios.post(apiEndpoint, null, {
       headers: {
-        'token': '68e350b2-690f-4450-affd-bb1bf1f4a5fa',
+        'token': 'd7f6aee6-d8e0-46c2-a968-1df465218af1',
         'appkey': appKey,
         'username': username,
         'password': password,
@@ -80,6 +80,7 @@ app.get('/api/token', async (req, res) => {
 
 let dadosInseridos = false;
 
+
 app.get('/api/consulta/0', async (req, res) => {
   try {
     const token = await getToken();
@@ -94,12 +95,14 @@ app.get('/api/consulta/0', async (req, res) => {
         return res.status(500).json({ error: 'Erro na consulta.' });
       }
 
+
+
       for (const row of formattedData.responseBody.rows) {
-        console.log('Dados a serem salvos no banco:', row);
+
         await prisma.pedido.create({
           data: {
             empresa: row[0],
-            nroUnico: row[1], 
+            nroUnico: row[1],
             nroNota: row[2],
             ordemCarga: row[3],
             dataNegociacao: row[4],
@@ -108,30 +111,32 @@ app.get('/api/consulta/0', async (req, res) => {
             descTipoOper: row[7],
             tipMov: row[8],
             entregaCliente: row[9],
-            codVendedor: row[10],
-            vendedor: row[11],
-            codParceiro: row[12],
-            razaoSocial: row[13],
-            pendente: row[14],
-            codProduto: row[15],
-            descricaoProduto: row[16],
-            marca: row[17],
-            controle: row[18],
-            qtdNegociada: row[19],
-            qtdPendente: row[20],
-            estoque: row[21],
-            valorUnitario: row[22],
-            valorTotal: row[23],
-            valorPendente: row[24],
-            mes: row[25],
-            statusAguardando: row[26],
-            previsaoEntregaFinal: row[27],
-            dataModificacao: new Date(), 
+            codVendExt: row[10],
+            vendedorExt: row[11],
+            codVendedor: row[12],
+            vendedor: row[13],
+            codParceiro: row[14],
+            razaoSocial: row[15],
+            pendente: row[16],
+            codProduto: row[17],
+            descricaoProduto: row[18],
+            marca: row[19],
+            controle: row[20],
+            qtdNegociada: row[21],
+            qtdPendente: row[22],
+            estoque: row[23],
+            valorUnitario: row[24],
+            valorTotal: row[25],
+            valorPendente: row[26],
+            mes: row[27],
+            statusAguardando: row[28],
+            previsaoEntregaFinal: row[29],
+            dataModificacao: new Date(),
           },
         });
       }
 
-      dadosInseridos = true; 
+      dadosInseridos = true;
 
       return res.json({ message: 'Dados inseridos no banco.' });
     } else {
@@ -152,7 +157,7 @@ app.get('/api/consulta/0', async (req, res) => {
             where: { id: registroBanco.id },
             data: {
               empresa: row[0],
-              nroUnico: row[1], 
+              nroUnico: row[1],
               nroNota: row[2],
               ordemCarga: row[3],
               dataNegociacao: row[4],
@@ -161,25 +166,27 @@ app.get('/api/consulta/0', async (req, res) => {
               descTipoOper: row[7],
               tipMov: row[8],
               entregaCliente: row[9],
-              codVendedor: row[10],
-              vendedor: row[11],
-              codParceiro: row[12],
-              razaoSocial: row[13],
-              pendente: row[14],
-              codProduto: row[15],
-              descricaoProduto: row[16],
-              marca: row[17],
-              controle: row[18],
-              qtdNegociada: row[19],
-              qtdPendente: row[20],
-              estoque: row[21],
-              valorUnitario: row[22],
-              valorTotal: row[23],
-              valorPendente: row[24],
-              mes: row[25],
-              statusAguardando: row[26],
-              previsaoEntregaFinal: row[27],
-              dataModificacao: new Date(), 
+              codVendExt: row[10],
+              vendedorExt: row[11],
+              codVendedor: row[12],
+              vendedor: row[13],
+              codParceiro: row[14],
+              razaoSocial: row[15],
+              pendente: row[16],
+              codProduto: row[17],
+              descricaoProduto: row[18],
+              marca: row[19],
+              controle: row[20],
+              qtdNegociada: row[21],
+              qtdPendente: row[22],
+              estoque: row[23],
+              valorUnitario: row[24],
+              valorTotal: row[25],
+              valorPendente: row[26],
+              mes: row[27],
+              statusAguardando: row[28],
+              previsaoEntregaFinal: row[29],
+              dataModificacao: new Date(),
             },
           });
         } else {
@@ -187,7 +194,7 @@ app.get('/api/consulta/0', async (req, res) => {
           await prisma.pedido.create({
             data: {
               empresa: row[0],
-              nroUnico: row[1], 
+              nroUnico: row[1],
               nroNota: row[2],
               ordemCarga: row[3],
               dataNegociacao: row[4],
@@ -196,25 +203,27 @@ app.get('/api/consulta/0', async (req, res) => {
               descTipoOper: row[7],
               tipMov: row[8],
               entregaCliente: row[9],
-              codVendedor: row[10],
-              vendedor: row[11],
-              codParceiro: row[12],
-              razaoSocial: row[13],
-              pendente: row[14],
-              codProduto: row[15],
-              descricaoProduto: row[16],
-              marca: row[17],
-              controle: row[18],
-              qtdNegociada: row[19],
-              qtdPendente: row[20],
-              estoque: row[21],
-              valorUnitario: row[22],
-              valorTotal: row[23],
-              valorPendente: row[24],
-              mes: row[25],
-              statusAguardando: row[26],
-              previsaoEntregaFinal: row[27],
-              dataModificacao: new Date(), 
+              codVendExt: row[10],
+              vendedorExt: row[11],
+              codVendedor: row[12],
+              vendedor: row[13],
+              codParceiro: row[14],
+              razaoSocial: row[15],
+              pendente: row[16],
+              codProduto: row[17],
+              descricaoProduto: row[18],
+              marca: row[19],
+              controle: row[20],
+              qtdNegociada: row[21],
+              qtdPendente: row[22],
+              estoque: row[23],
+              valorUnitario: row[24],
+              valorTotal: row[25],
+              valorPendente: row[26],
+              mes: row[27],
+              statusAguardando: row[28],
+              previsaoEntregaFinal: row[29],
+              dataModificacao: new Date(),
             },
           });
         }
@@ -243,7 +252,7 @@ cron.schedule('0 0 * * *', async () => {
   try {
     // Obtém o bearer token.
     const bearerToken = await getBearerToken();
-    
+
     if (!bearerToken) {
       console.error('Erro ao obter o token.');
       return;
@@ -271,6 +280,7 @@ cron.schedule('0 0 * * *', async () => {
           where: { id: registroBanco.id },
           data: {
             empresa: row[0],
+            nroUnico: row[1],
             nroNota: row[2],
             ordemCarga: row[3],
             dataNegociacao: row[4],
@@ -279,25 +289,27 @@ cron.schedule('0 0 * * *', async () => {
             descTipoOper: row[7],
             tipMov: row[8],
             entregaCliente: row[9],
-            codVendedor: row[10],
-            vendedor: row[11],
-            codParceiro: row[12],
-            razaoSocial: row[13],
-            pendente: row[14],
-            codProduto: row[15],
-            descricaoProduto: row[16],
-            marca: row[17],
-            controle: row[18],
-            qtdNegociada: row[19],
-            qtdPendente: row[20],
-            estoque: row[21],
-            valorUnitario: row[22],
-            valorTotal: row[23],
-            valorPendente: row[24],
-            mes: row[25],
-            statusAguardando: row[26],
-            previsaoEntregaFinal: row[27],
-            dataModificacao: dataDeModificacao, // Adicione a data de modificação
+            codVendExt: row[10],
+            vendedorExt: row[11],
+            codVendedor: row[12],
+            vendedor: row[13],
+            codParceiro: row[14],
+            razaoSocial: row[15],
+            pendente: row[16],
+            codProduto: row[17],
+            descricaoProduto: row[18],
+            marca: row[19],
+            controle: row[20],
+            qtdNegociada: row[21],
+            qtdPendente: row[22],
+            estoque: row[23],
+            valorUnitario: row[24],
+            valorTotal: row[25],
+            valorPendente: row[26],
+            mes: row[27],
+            statusAguardando: row[28],
+            previsaoEntregaFinal: row[29],
+            dataModificacao: dataDeModificacao,
           },
         });
       } else {
@@ -314,25 +326,27 @@ cron.schedule('0 0 * * *', async () => {
             descTipoOper: row[7],
             tipMov: row[8],
             entregaCliente: row[9],
-            codVendedor: row[10],
-            vendedor: row[11],
-            codParceiro: row[12],
-            razaoSocial: row[13],
-            pendente: row[14],
-            codProduto: row[15],
-            descricaoProduto: row[16],
-            marca: row[17],
-            controle: row[18],
-            qtdNegociada: row[19],
-            qtdPendente: row[20],
-            estoque: row[21],
-            valorUnitario: row[22],
-            valorTotal: row[23],
-            valorPendente: row[24],
-            mes: row[25],
-            statusAguardando: row[26],
-            previsaoEntregaFinal: row[27],
-            dataModificacao: dataDeModificacao, // Adicione a data de modificação
+            codVendExt: row[10],
+            vendedorExt: row[11],
+            codVendedor: row[12],
+            vendedor: row[13],
+            codParceiro: row[14],
+            razaoSocial: row[15],
+            pendente: row[16],
+            codProduto: row[17],
+            descricaoProduto: row[18],
+            marca: row[19],
+            controle: row[20],
+            qtdNegociada: row[21],
+            qtdPendente: row[22],
+            estoque: row[23],
+            valorUnitario: row[24],
+            valorTotal: row[25],
+            valorPendente: row[26],
+            mes: row[27],
+            statusAguardando: row[28],
+            previsaoEntregaFinal: row[29],
+            dataModificacao: dataDeModificacao,
           },
         });
       }
