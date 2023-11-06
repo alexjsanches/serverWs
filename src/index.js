@@ -38,7 +38,7 @@ async function getBearerToken() {
   try {
     const response = await axios.post(apiEndpoint, null, {
       headers: {
-        'token': 'd7f6aee6-d8e0-46c2-a968-1df465218af1',
+        'token': '2481014c-d0ad-4411-8692-100974ca085d',
         'appkey': appKey,
         'username': username,
         'password': password,
